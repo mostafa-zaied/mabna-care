@@ -2854,7 +2854,7 @@ abstract class AppLocalizations {
   /// No description provided for @pushAutoAptPassSetBody.
   ///
   /// In en, this message translates to:
-  /// **'{apt} has set their apartment passcode'**
+  /// **'{apt}: Apartment passcode set successfully'**
   String pushAutoAptPassSetBody(String apt);
 
   /// No description provided for @navAppRating.
@@ -3154,7 +3154,7 @@ abstract class AppLocalizations {
   /// No description provided for @pushAutoPollVotedBody.
   ///
   /// In en, this message translates to:
-  /// **'{apt} cast a vote in building polls'**
+  /// **'{apt}: Voted in building polls'**
   String pushAutoPollVotedBody(String apt);
 
   /// No description provided for @emergencyArrearsEditTitle.

@@ -17,16 +17,22 @@ self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim(
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const title = payload?.data?.title || payload?.notification?.title || 'MABNA CARE';
-  const body = payload?.data?.body || payload?.notification?.body || '';
-  const icon = payload?.data?.icon || payload?.notification?.icon || 'https://mabna-care.web.app/icons/Icon-192.png';
-  const badge = payload?.data?.badge || payload?.notification?.badge || 'https://mabna-care.web.app/icons/notification-badge.png';
+  // When FCM payload already includes a `notification` block, the Firebase SDK
+  // displays it automatically. Avoid showing a duplicate notification here.
+  if (payload?.notification) return;
+
+  const title = payload?.data?.title || 'MABNA CARE';
+  const body = payload?.data?.body || '';
+  const icon = payload?.data?.icon || 'https://mabna-care.web.app/icons/Icon-192.png';
+  const badge = payload?.data?.badge || 'https://mabna-care.web.app/icons/notification-badge.png';
   const url = payload?.data?.url || 'https://mabna-care.web.app/';
+  const tag = payload?.data?.tag || 'mabna-care-notification';
 
   self.registration.showNotification(title, {
     body,
     icon,
     badge,
+    tag,
     data: { url },
   });
 });

@@ -1543,7 +1543,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String pushAutoAptPassSetBody(String apt) {
-    return 'قامت $apt بتعيين كلمة السر الخاصة بها بنجاح';
+    return '$apt: تم تعيين كلمة السر بنجاح';
   }
 
   @override
@@ -1714,7 +1714,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String pushAutoPollVotedBody(String apt) {
-    return 'قامت $apt بالتصويت في قرارات العمارة';
+    return '$apt: تم التصويت في قرارات العمارة';
   }
 
   @override

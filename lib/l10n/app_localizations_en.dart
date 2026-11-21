@@ -1559,7 +1559,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pushAutoAptPassSetBody(String apt) {
-    return '$apt has set their apartment passcode';
+    return '$apt: Apartment passcode set successfully';
   }
 
   @override
@@ -1730,7 +1730,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pushAutoPollVotedBody(String apt) {
-    return '$apt cast a vote in building polls';
+    return '$apt: Voted in building polls';
   }
 
   @override
