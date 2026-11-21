@@ -287,6 +287,7 @@ Future<void> showApartmentPaymentDialog({
   String? pickedName;
   String? errMsg;
   bool submitting = false;
+  bool pickingImage = false;
   const instaPayPhone = '01021950445';
 
   await showDialog<void>(
@@ -548,77 +549,119 @@ Future<void> showApartmentPaymentDialog({
                 const SizedBox(height: AppSpacing.xs),
                 InkWell(
                   borderRadius: BorderRadius.circular(AppRadius.lg),
-                  onTap: () async {
-                    final XFile? file = await picker.pickImage(
-                      source: ImageSource.gallery,
-                      maxWidth: 1400,
-                      maxHeight: 1400,
-                      imageQuality: 72,
-                    );
-                    if (file != null) {
-                      final rawBytes = await file.readAsBytes();
-                      final bytes = await compressReceiptImage(rawBytes);
-                      setModalState(() {
-                        pickedBytes = bytes;
-                        pickedName = file.name.endsWith('.png')
-                            ? file.name.replaceAll('.png', '.jpg')
-                            : file.name;
-                        errMsg = null;
-                      });
-                    }
-                  },
+                  onTap: (pickingImage || submitting)
+                      ? null
+                      : () async {
+                          final XFile? file = await picker.pickImage(
+                            source: ImageSource.gallery,
+                            maxWidth: 1400,
+                            maxHeight: 1400,
+                            imageQuality: 72,
+                          );
+                          if (file == null) return;
+                          if (ctx.mounted) {
+                            setModalState(() {
+                              pickingImage = true;
+                              errMsg = null;
+                            });
+                          }
+                          try {
+                            final rawBytes = await file.readAsBytes();
+                            final bytes = await compressReceiptImage(rawBytes);
+                            if (ctx.mounted) {
+                              setModalState(() {
+                                pickedBytes = bytes;
+                                pickedName = file.name.endsWith('.png')
+                                    ? file.name.replaceAll('.png', '.jpg')
+                                    : file.name;
+                                errMsg = null;
+                              });
+                            }
+                          } finally {
+                            if (ctx.mounted) {
+                              setModalState(() => pickingImage = false);
+                            }
+                          }
+                        },
                   child: Container(
                     padding: const EdgeInsetsDirectional.all(AppSpacing.md),
                     decoration: BoxDecoration(
                       color: AppColors.surface(isDark),
                       borderRadius: BorderRadius.circular(AppRadius.lg),
                       border: Border.all(
-                        color: pickedBytes != null
-                            ? AppColors.emerald.withValues(alpha: 0.65)
-                            : AppColors.border(isDark),
+                        color: pickingImage
+                            ? AppColors.primary.withValues(alpha: 0.65)
+                            : (pickedBytes != null
+                                ? AppColors.emerald.withValues(alpha: 0.65)
+                                : AppColors.border(isDark)),
                       ),
                     ),
-                    child: pickedBytes == null
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate_outlined,
-                                size: 19,
-                                color: AppColors.primaryText(isDark),
-                              ),
-                              const SizedBox(width: AppSpacing.sm),
-                              Flexible(
-                                child: Text(
-                                  s.pickImagePrompt.replaceAll('📸', '').trim(),
-                                  textAlign: TextAlign.center,
-                                  style: AppTypography.label.copyWith(
-                                    color: AppColors.textSecondary(isDark),
+                    child: pickingImage
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.2,
+                                    color: AppColors.primaryText(isDark),
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: AppSpacing.sm),
+                                Text(
+                                  s.uploadingBtn,
+                                  style: AppTypography.label.copyWith(
+                                    color: AppColors.primaryText(isDark),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
-                        : Column(
-                            children: [
-                              Text(
-                                s.chosenFile(pickedName ?? ''),
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.emeraldText(isDark),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(AppRadius.md),
-                                child: Image.memory(
-                                  pickedBytes!,
-                                  height: 110,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ],
-                          ),
+                        : (pickedBytes == null
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    size: 19,
+                                    color: AppColors.primaryText(isDark),
+                                  ),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Flexible(
+                                    child: Text(
+                                      s.pickImagePrompt.replaceAll('📸', '').trim(),
+                                      textAlign: TextAlign.center,
+                                      style: AppTypography.label.copyWith(
+                                        color: AppColors.textSecondary(isDark),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Text(
+                                    s.chosenFile(pickedName ?? ''),
+                                    style: AppTypography.caption.copyWith(
+                                      color: AppColors.emeraldText(isDark),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.sm),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(AppRadius.md),
+                                    child: Image.memory(
+                                      pickedBytes!,
+                                      height: 110,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ],
+                              )),
                   ),
                 ),
 
@@ -675,7 +718,7 @@ Future<void> showApartmentPaymentDialog({
                             : s.confirmPaymentBtn.replaceAll('✅', '').trim(),
                         icon: Icons.check_rounded,
                         loading: submitting,
-                        onPressed: submitting
+                        onPressed: (submitting || pickingImage)
                             ? null
                             : () async {
                                 if (pickedBytes == null) {

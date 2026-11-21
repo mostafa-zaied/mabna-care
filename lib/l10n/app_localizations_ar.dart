@@ -908,7 +908,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String pushAutoPaymentBody(String apt) {
-    return '$apt رفعت إيصال سداد مصاريف الشهر.';
+    return '$apt: تم رفع إيصال سداد مصاريف الشهر';
   }
 
   @override
@@ -1630,7 +1630,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String pushAutoNewRatingBody(String apt, int stars) {
-    return 'قيّمت $apt التطبيق بـ $stars نجوم';
+    return '$apt: تم تقييم التطبيق بـ $stars نجوم';
   }
 
   @override

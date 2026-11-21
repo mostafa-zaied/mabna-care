@@ -1726,7 +1726,7 @@ abstract class AppLocalizations {
   /// No description provided for @pushAutoPaymentBody.
   ///
   /// In en, this message translates to:
-  /// **'{apt} uploaded a monthly payment receipt.'**
+  /// **'{apt}: Monthly payment receipt uploaded'**
   String pushAutoPaymentBody(String apt);
 
   /// No description provided for @pushAutoFeedbackTitle.
@@ -3004,7 +3004,7 @@ abstract class AppLocalizations {
   /// No description provided for @pushAutoNewRatingBody.
   ///
   /// In en, this message translates to:
-  /// **'{apt} rated the app {stars} stars'**
+  /// **'{apt}: Rated the app {stars} stars'**
   String pushAutoNewRatingBody(String apt, int stars);
 
   /// No description provided for @emergencyArrearsTitle.

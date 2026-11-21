@@ -551,7 +551,7 @@
     }
   },
   "pushAutoPaymentTitle": "🧾 New Payment Uploaded",
-  "pushAutoPaymentBody": "{apt} uploaded a monthly payment receipt.",
+  "pushAutoPaymentBody": "{apt}: Monthly payment receipt uploaded",
   "@pushAutoPaymentBody": {
     "placeholders": {
       "apt": {
@@ -877,7 +877,7 @@
   "ratingUnratedAptsTitle": "Apartments that haven't rated yet ({count}):",
   "@ratingUnratedAptsTitle": { "placeholders": { "count": { "type": "int" } } },
   "pushAutoNewRatingTitle": "New App Rating",
-  "pushAutoNewRatingBody": "{apt} rated the app {stars} stars",
+  "pushAutoNewRatingBody": "{apt}: Rated the app {stars} stars",
   "@pushAutoNewRatingBody": { "placeholders": { "apt": { "type": "String" }, "stars": { "type": "int" } } },
   "emergencyArrearsTitle": "Pending Dues & Arrears for Fund",
   "emergencyArrearsPendingKpi": "Pending Dues",

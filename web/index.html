@@ -69,12 +69,15 @@
           firebase.initializeApp(firebaseConfig);
         }
 
-        // Clean up any legacy flutter_service_worker.js so stale builds never stick
+        // Clean up any legacy flutter_service_worker.js or duplicate FCM SW on wrong scope
         if ('serviceWorker' in navigator) {
+          const expectedScope = new URL('firebase-cloud-messaging-push-scope', document.baseURI).href;
           navigator.serviceWorker.getRegistrations().then((regs) => {
             for (const r of regs) {
               const url = (r.active && r.active.scriptURL) || (r.waiting && r.waiting.scriptURL) || (r.installing && r.installing.scriptURL) || '';
               if (url.includes('flutter_service_worker.js')) {
+                r.unregister();
+              } else if (url.includes('firebase-messaging-sw.js') && !r.scope.startsWith(expectedScope)) {
                 r.unregister();
               }
             }
@@ -100,12 +103,13 @@
             const body = payload?.data?.body || payload?.notification?.body || '';
             const icon = payload?.data?.icon || new URL('icons/Icon-192.png', document.baseURI).href;
             const badge = payload?.data?.badge || new URL('icons/notification-badge.png', document.baseURI).href;
+            const tag = payload?.data?.tag || payload?.notification?.tag || 'mabna-care-notification';
             if (Notification.permission === 'granted') {
               try {
-                new Notification(title, { body, icon, badge });
+                new Notification(title, { body, icon, badge, tag });
               } catch (_) {
                 if (reg && reg.showNotification) {
-                  reg.showNotification(title, { body, icon, badge });
+                  reg.showNotification(title, { body, icon, badge, tag });
                 }
               }
             }

@@ -917,7 +917,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pushAutoPaymentBody(String apt) {
-    return '$apt uploaded a monthly payment receipt.';
+    return '$apt: Monthly payment receipt uploaded';
   }
 
   @override
@@ -1646,7 +1646,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pushAutoNewRatingBody(String apt, int stars) {
-    return '$apt rated the app $stars stars';
+    return '$apt: Rated the app $stars stars';
   }
 
   @override
