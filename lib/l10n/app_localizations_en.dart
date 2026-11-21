@@ -1848,4 +1848,127 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aptConvertedToClosedToast =>
       '✅ Apartment switched to Closed and monthly count updated';
+
+  @override
+  String get myProfileTitle => 'My Apartment Profile';
+
+  @override
+  String get myProfileBtn => 'Profile';
+
+  @override
+  String get floorLabel => 'Floor';
+
+  @override
+  String get floorHint => 'e.g. 3rd Floor';
+
+  @override
+  String get phoneNumberLabel => 'Phone Number';
+
+  @override
+  String get phoneNumberHint => '01012345678';
+
+  @override
+  String get showPhoneToNeighborsLabel => 'Show my phone to neighbors';
+
+  @override
+  String get showPhoneToNeighborsSub =>
+      'If off, only the building manager can see it';
+
+  @override
+  String get saveProfileBtn => 'Save Profile';
+
+  @override
+  String get profileSavedToast => '✅ Apartment profile saved successfully';
+
+  @override
+  String get profileSelectAptFirst =>
+      'Select your apartment above and unlock it with its passcode to edit your profile';
+
+  @override
+  String get changeAptPassTitle => 'Change Apartment Passcode';
+
+  @override
+  String get currentPassLabel => 'Current Passcode';
+
+  @override
+  String get newPassLabel => 'New Passcode';
+
+  @override
+  String get confirmNewPassLabel => 'Confirm New Passcode';
+
+  @override
+  String get saveNewPassBtn => 'Update Passcode';
+
+  @override
+  String get aptPassChangedToast => '✅ Apartment passcode updated successfully';
+
+  @override
+  String get forgotPassSectionTitle => 'Forgot Passcode?';
+
+  @override
+  String get forgotPassDesc =>
+      'To protect your apartment, you can request a passcode reset from the building manager in one tap.';
+
+  @override
+  String get requestPassResetBtn => 'Request Reset from Manager';
+
+  @override
+  String get whatsappManagerBtn => 'WhatsApp Manager';
+
+  @override
+  String get passResetRequestedToast =>
+      '✅ Passcode reset request sent to manager';
+
+  @override
+  String get contactCategoryLabel => 'Category / Specialty';
+
+  @override
+  String get catAll => 'All';
+
+  @override
+  String get catPlumbing => 'Plumbing';
+
+  @override
+  String get catElectric => 'Electricity';
+
+  @override
+  String get catElevator => 'Elevator';
+
+  @override
+  String get catAc => 'AC';
+
+  @override
+  String get catCarpentry => 'Carpentry';
+
+  @override
+  String get catOther => 'Other';
+
+  @override
+  String get exitAppDialogTitle => 'Exit MABNA CARE?';
+
+  @override
+  String get exitAppDialogBody =>
+      'Tap Stay to continue or Exit to close the app.';
+
+  @override
+  String get stayInAppBtn => 'Stay in App';
+
+  @override
+  String get exitAppBtn => 'Exit';
+
+  @override
+  String get changePhotoBtn => 'Change Photo';
+
+  @override
+  String get removePhotoBtn => 'Remove Photo';
+
+  @override
+  String get contactsTabNeighbors => 'Neighbors';
+
+  @override
+  String get noNeighborsYet =>
+      'No neighbors have added their floor or phone number to their profile yet.';
+
+  @override
+  String get neighborPhoneHiddenAdminBadge => 'Hidden from neighbors';
 }

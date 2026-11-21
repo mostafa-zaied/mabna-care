@@ -305,6 +305,7 @@ class BuildingContact {
   final String name;
   final String roleDesc;
   final String phone;
+  final String category; // plumbing | electric | elevator | ac | carpentry | other
   final int? addedByApt;
   final String? addedByLabel;
   final String? cardImageUrl;
@@ -316,6 +317,7 @@ class BuildingContact {
     required this.name,
     required this.roleDesc,
     required this.phone,
+    this.category = 'other',
     this.addedByApt,
     this.addedByLabel,
     this.cardImageUrl,
@@ -340,11 +342,14 @@ class BuildingContact {
 
   factory BuildingContact.fromJson(Map<String, dynamic> json) {
     final rawCard = (json['card_image_url'] as String?)?.trim();
+    final rawCat = (json['category'] as String?)?.trim().toLowerCase() ?? 'other';
+    const validCats = {'plumbing', 'electric', 'elevator', 'ac', 'carpentry', 'other'};
     return BuildingContact(
       id: json['id'].toString(),
       name: (json['name'] as String?) ?? '',
       roleDesc: (json['role_desc'] as String?) ?? '',
       phone: (json['phone'] as String?) ?? '',
+      category: validCats.contains(rawCat) ? rawCat : 'other',
       addedByApt: (json['added_by_apt'] as num?)?.toInt(),
       addedByLabel: (json['added_by_label'] as String?)?.trim(),
       cardImageUrl: (rawCard != null && rawCard.isNotEmpty) ? rawCard : null,
@@ -670,6 +675,49 @@ class SpecialAptFee {
       paidAt: json['paid_at'] != null
           ? DateTime.tryParse(json['paid_at'].toString())
           : null,
+    );
+  }
+}
+
+class ApartmentProfile {
+  final int aptNum;
+  final String displayName;
+  final String floorNum;
+  final String phone;
+  final bool showPhoneToNeighbors;
+  final bool isClosed;
+  final String avatarUrl;
+
+  const ApartmentProfile({
+    required this.aptNum,
+    this.displayName = '',
+    this.floorNum = '',
+    this.phone = '',
+    this.showPhoneToNeighbors = true,
+    this.isClosed = false,
+    this.avatarUrl = '',
+  });
+
+  bool get hasAvatar => avatarUrl.trim().isNotEmpty;
+  bool get hasPhone => phone.trim().isNotEmpty;
+  bool get supportsWhatsApp =>
+      phone.replaceAll(RegExp(r'[^0-9]'), '').length >= 10;
+
+  String get whatsappNumber {
+    final digits = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.startsWith('0')) return '2$digits';
+    return digits;
+  }
+
+  factory ApartmentProfile.fromJson(Map<String, dynamic> json) {
+    return ApartmentProfile(
+      aptNum: (json['apt_num'] as num?)?.toInt() ?? 0,
+      displayName: (json['display_name'] as String?)?.trim() ?? '',
+      floorNum: (json['floor_num'] as String?)?.trim() ?? '',
+      phone: (json['phone'] as String?)?.trim() ?? '',
+      showPhoneToNeighbors: json['show_phone_to_neighbors'] as bool? ?? true,
+      isClosed: json['is_closed'] as bool? ?? false,
+      avatarUrl: (json['avatar_url'] as String?)?.trim() ?? '',
     );
   }
 }

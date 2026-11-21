@@ -27,6 +27,42 @@ class _ContactsScreenState extends State<ContactsScreen> {
   /// 0 = Phone numbers only, 1 = Cards & photos only
   int _selectedTab = 0;
 
+  /// 'all' | 'plumbing' | 'electric' | 'elevator' | 'ac' | 'carpentry' | 'other'
+  String _selectedCategory = 'all';
+
+  static const _categoryKeys = [
+    'plumbing',
+    'electric',
+    'elevator',
+    'ac',
+    'carpentry',
+    'other',
+  ];
+
+  String _categoryLabel(dynamic s, String key) {
+    return switch (key) {
+      'plumbing' => '${s.catPlumbing}',
+      'electric' => '${s.catElectric}',
+      'elevator' => '${s.catElevator}',
+      'ac' => '${s.catAc}',
+      'carpentry' => '${s.catCarpentry}',
+      'other' => '${s.catOther}',
+      _ => '${s.catAll}',
+    };
+  }
+
+  IconData _categoryIcon(String key) {
+    return switch (key) {
+      'plumbing' => Icons.plumbing_rounded,
+      'electric' => Icons.bolt_rounded,
+      'elevator' => Icons.elevator_outlined,
+      'ac' => Icons.ac_unit_rounded,
+      'carpentry' => Icons.carpenter_outlined,
+      'other' => Icons.build_outlined,
+      _ => Icons.apps_rounded,
+    };
+  }
+
   static String _normalizeForSort(String value) {
     return value
         .trim()
@@ -146,6 +182,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     final nameCtrl = TextEditingController(text: existing?.name ?? '');
     final roleCtrl = TextEditingController(text: existing?.roleDesc ?? '');
     final phoneCtrl = TextEditingController(text: existing?.phone ?? '');
+    String selectedCategory = existing?.category ?? 'other';
     final aptsCount = state.currentMonth?.aptsCount ?? 13;
     int? selectedApt = state.myAptNum;
     if (selectedApt != null && (selectedApt < 1 || selectedApt > aptsCount)) {
@@ -244,6 +281,40 @@ class _ContactsScreenState extends State<ContactsScreen> {
                         labelText: s.contactRoleLabel,
                         hintText: s.contactRoleHint,
                       ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedCategory,
+                      dropdownColor: AppColors.cardElevated(isDark),
+                      decoration: InputDecoration(
+                        labelText: s.contactCategoryLabel,
+                      ),
+                      items: _categoryKeys
+                          .map(
+                            (k) => DropdownMenuItem<String>(
+                              value: k,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _categoryIcon(k),
+                                    size: 16,
+                                    color: AppColors.primaryText(isDark),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(_categoryLabel(s, k)),
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: saving
+                          ? null
+                          : (v) {
+                              if (v != null) {
+                                setModalState(() => selectedCategory = v);
+                              }
+                            },
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     TextField(
@@ -452,6 +523,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                             name: nameCtrl.text,
                             roleDesc: roleCtrl.text,
                             phone: phoneCtrl.text,
+                            category: selectedCategory,
                             newCardImageBytes: cardBytes,
                             removeCardImage: removeExistingCard,
                           );
@@ -460,6 +532,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                             name: nameCtrl.text,
                             roleDesc: roleCtrl.text,
                             phone: phoneCtrl.text,
+                            category: selectedCategory,
                             addedByApt:
                                 state.isAdminAuthenticated ? null : selectedApt,
                             addedByLabel: state.isAdminAuthenticated
@@ -509,8 +582,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ..sort(_compareByTitle);
         final cardContacts = allContacts.where((c) => c.hasCardImage).toList()
           ..sort(_compareByTitle);
-        final visibleContacts =
+        final tabContacts =
             _selectedTab == 0 ? numberContacts : cardContacts;
+        final visibleContacts = _selectedCategory == 'all'
+            ? tabContacts
+            : tabContacts
+                .where((c) => c.category == _selectedCategory)
+                .toList();
 
         return Align(
           alignment: Alignment.topCenter,
@@ -606,7 +684,53 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.sm),
+                  // Category Classification Filter Strip
+                  SizedBox(
+                    height: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        for (final cat in ['all', ..._categoryKeys]) ...[
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 6),
+                            child: ChoiceChip(
+                              avatar: Icon(
+                                _categoryIcon(cat),
+                                size: 15,
+                                color: _selectedCategory == cat
+                                    ? AppColors.onPrimaryAction(isDark)
+                                    : AppColors.primaryText(isDark),
+                              ),
+                              label: Text(
+                                cat == 'all'
+                                    ? '${s.catAll} (${tabContacts.length})'
+                                    : _categoryLabel(s, cat),
+                                style: AppTypography.caption.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: _selectedCategory == cat
+                                      ? AppColors.onPrimaryAction(isDark)
+                                      : AppColors.textSecondary(isDark),
+                                ),
+                              ),
+                              selected: _selectedCategory == cat,
+                              selectedColor: AppColors.primaryActionBg(isDark),
+                              backgroundColor: AppColors.card(isDark),
+                              side: BorderSide(
+                                color: _selectedCategory == cat
+                                    ? AppColors.primary
+                                    : AppColors.border(isDark),
+                              ),
+                              showCheckmark: false,
+                              onSelected: (_) =>
+                                  setState(() => _selectedCategory = cat),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: cubit.refreshData,

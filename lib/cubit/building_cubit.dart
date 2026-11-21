@@ -146,6 +146,13 @@ class BuildingCubit extends Cubit<BuildingState> {
       final specialFees = await _service
           .fetchSpecialAptFees()
           .timeout(const Duration(seconds: 10), onTimeout: () => state.specialAptFees);
+      final profiles = await _service
+          .fetchApartmentProfiles(
+            adminPass: isAdminAuthed ? adminPass : null,
+            aptNum: savedAptNum,
+            passcode: savedAptPass,
+          )
+          .timeout(const Duration(seconds: 10), onTimeout: () => state.apartmentProfiles);
 
       emit(state.copyWith(
         loading: false,
@@ -171,6 +178,7 @@ class BuildingCubit extends Cubit<BuildingState> {
         emergencyArrears: arrears,
         closedAptNums: closedAptNums,
         specialAptFees: specialFees,
+        apartmentProfiles: profiles,
       ));
       _ensureLiveSubscription();
       unawaited(syncPushTokenIfGranted());
@@ -214,6 +222,13 @@ class BuildingCubit extends Cubit<BuildingState> {
       final specialFees = await _service
           .fetchSpecialAptFees()
           .timeout(const Duration(seconds: 10), onTimeout: () => state.specialAptFees);
+      final profiles = await _service
+          .fetchApartmentProfiles(
+            adminPass: state.isAdminAuthenticated ? state.adminPass : null,
+            aptNum: state.myAptNum,
+            passcode: state.savedAptPass,
+          )
+          .timeout(const Duration(seconds: 10), onTimeout: () => state.apartmentProfiles);
       if (isClosed) return;
 
       final targetIdx = data.months.isEmpty
@@ -237,6 +252,7 @@ class BuildingCubit extends Cubit<BuildingState> {
         emergencyArrears: arrears,
         closedAptNums: closedAptNums,
         specialAptFees: specialFees,
+        apartmentProfiles: profiles,
       ));
     } catch (_) {
       // Keep existing UI state smoothly on transient background refresh error
@@ -1499,6 +1515,7 @@ class BuildingCubit extends Cubit<BuildingState> {
     required String name,
     required String roleDesc,
     required String phone,
+    String category = 'other',
     int? addedByApt,
     String? addedByLabel,
     Uint8List? cardImageBytes,
@@ -1515,6 +1532,7 @@ class BuildingCubit extends Cubit<BuildingState> {
         name: name,
         roleDesc: roleDesc,
         phone: phone,
+        category: category,
         addedByApt: addedByApt,
         addedByLabel: addedByLabel,
         cardImageBytes: cardImageBytes,
@@ -1548,6 +1566,7 @@ class BuildingCubit extends Cubit<BuildingState> {
     required String name,
     required String roleDesc,
     required String phone,
+    String? category,
     Uint8List? newCardImageBytes,
     bool removeCardImage = false,
   }) async {
@@ -1559,6 +1578,7 @@ class BuildingCubit extends Cubit<BuildingState> {
         name: name,
         roleDesc: roleDesc,
         phone: phone,
+        category: category,
         newCardImageBytes: newCardImageBytes,
         removeCardImage: removeCardImage,
       );
@@ -2071,5 +2091,67 @@ class BuildingCubit extends Cubit<BuildingState> {
         feedbackIsError: false,
       ));
     });
+  }
+
+  Future<bool> updateOwnApartmentProfile({
+    required int aptNum,
+    String? displayName,
+    required String floorNum,
+    required String phone,
+    required bool showPhoneToNeighbors,
+    Uint8List? avatarBytes,
+    bool removeAvatar = false,
+  }) async {
+    return _withBusy(() async {
+      final err = await _service.updateOwnApartmentProfile(
+        aptNum: aptNum,
+        passcode: state.savedAptPass ?? '',
+        displayName: displayName,
+        floorNum: floorNum,
+        phone: phone,
+        showPhoneToNeighbors: showPhoneToNeighbors,
+        adminPass: state.isAdminAuthenticated ? state.adminPass : null,
+        avatarBytes: avatarBytes,
+        removeAvatar: removeAvatar,
+      );
+      if (err != null) {
+        emit(state.copyWith(
+          feedbackMessage: () => '❌ ${_localizeError(err)}',
+          feedbackIsError: true,
+        ));
+        return false;
+      }
+      await loadData(preserveMonthIndex: state.selectedMonthIndex);
+      emit(state.copyWith(
+        feedbackMessage: () => state.s.profileSavedToast,
+        feedbackIsError: false,
+      ));
+      return true;
+    });
+  }
+
+  Future<String?> changeOwnApartmentPasscode({
+    required int aptNum,
+    required String oldPasscode,
+    required String newPasscode,
+  }) async {
+    String? outErr;
+    await _withBusy(() async {
+      final err = await _service.changeApartmentPasscode(
+        aptNum: aptNum,
+        oldPasscode: oldPasscode,
+        newPasscode: newPasscode,
+      );
+      if (err != null) {
+        outErr = _localizeError(err);
+        return;
+      }
+      await _saveAptSession(aptNum, newPasscode.trim());
+      emit(state.copyWith(
+        feedbackMessage: () => state.s.aptPassChangedToast,
+        feedbackIsError: false,
+      ));
+    });
+    return outErr;
   }
 }

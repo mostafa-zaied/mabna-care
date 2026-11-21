@@ -3360,6 +3360,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'✅ Apartment switched to Closed and monthly count updated'**
   String get aptConvertedToClosedToast;
+
+  /// No description provided for @myProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Apartment Profile'**
+  String get myProfileTitle;
+
+  /// No description provided for @myProfileBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get myProfileBtn;
+
+  /// No description provided for @floorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor'**
+  String get floorLabel;
+
+  /// No description provided for @floorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 3rd Floor'**
+  String get floorHint;
+
+  /// No description provided for @phoneNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumberLabel;
+
+  /// No description provided for @phoneNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'01012345678'**
+  String get phoneNumberHint;
+
+  /// No description provided for @showPhoneToNeighborsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show my phone to neighbors'**
+  String get showPhoneToNeighborsLabel;
+
+  /// No description provided for @showPhoneToNeighborsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'If off, only the building manager can see it'**
+  String get showPhoneToNeighborsSub;
+
+  /// No description provided for @saveProfileBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Profile'**
+  String get saveProfileBtn;
+
+  /// No description provided for @profileSavedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Apartment profile saved successfully'**
+  String get profileSavedToast;
+
+  /// No description provided for @profileSelectAptFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your apartment above and unlock it with its passcode to edit your profile'**
+  String get profileSelectAptFirst;
+
+  /// No description provided for @changeAptPassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Apartment Passcode'**
+  String get changeAptPassTitle;
+
+  /// No description provided for @currentPassLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Passcode'**
+  String get currentPassLabel;
+
+  /// No description provided for @newPassLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Passcode'**
+  String get newPassLabel;
+
+  /// No description provided for @confirmNewPassLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Passcode'**
+  String get confirmNewPassLabel;
+
+  /// No description provided for @saveNewPassBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Passcode'**
+  String get saveNewPassBtn;
+
+  /// No description provided for @aptPassChangedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Apartment passcode updated successfully'**
+  String get aptPassChangedToast;
+
+  /// No description provided for @forgotPassSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Passcode?'**
+  String get forgotPassSectionTitle;
+
+  /// No description provided for @forgotPassDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'To protect your apartment, you can request a passcode reset from the building manager in one tap.'**
+  String get forgotPassDesc;
+
+  /// No description provided for @requestPassResetBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Reset from Manager'**
+  String get requestPassResetBtn;
+
+  /// No description provided for @whatsappManagerBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp Manager'**
+  String get whatsappManagerBtn;
+
+  /// No description provided for @passResetRequestedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Passcode reset request sent to manager'**
+  String get passResetRequestedToast;
+
+  /// No description provided for @contactCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category / Specialty'**
+  String get contactCategoryLabel;
+
+  /// No description provided for @catAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get catAll;
+
+  /// No description provided for @catPlumbing.
+  ///
+  /// In en, this message translates to:
+  /// **'Plumbing'**
+  String get catPlumbing;
+
+  /// No description provided for @catElectric.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get catElectric;
+
+  /// No description provided for @catElevator.
+  ///
+  /// In en, this message translates to:
+  /// **'Elevator'**
+  String get catElevator;
+
+  /// No description provided for @catAc.
+  ///
+  /// In en, this message translates to:
+  /// **'AC'**
+  String get catAc;
+
+  /// No description provided for @catCarpentry.
+  ///
+  /// In en, this message translates to:
+  /// **'Carpentry'**
+  String get catCarpentry;
+
+  /// No description provided for @catOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get catOther;
+
+  /// No description provided for @exitAppDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit MABNA CARE?'**
+  String get exitAppDialogTitle;
+
+  /// No description provided for @exitAppDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Stay to continue or Exit to close the app.'**
+  String get exitAppDialogBody;
+
+  /// No description provided for @stayInAppBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay in App'**
+  String get stayInAppBtn;
+
+  /// No description provided for @exitAppBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exitAppBtn;
+
+  /// No description provided for @changePhotoBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get changePhotoBtn;
+
+  /// No description provided for @removePhotoBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get removePhotoBtn;
+
+  /// No description provided for @contactsTabNeighbors.
+  ///
+  /// In en, this message translates to:
+  /// **'Neighbors'**
+  String get contactsTabNeighbors;
+
+  /// No description provided for @noNeighborsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No neighbors have added their floor or phone number to their profile yet.'**
+  String get noNeighborsYet;
+
+  /// No description provided for @neighborPhoneHiddenAdminBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden from neighbors'**
+  String get neighborPhoneHiddenAdminBadge;
 }
 
 class _AppLocalizationsDelegate

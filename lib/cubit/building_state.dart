@@ -36,6 +36,7 @@ class BuildingState {
   final List<EmergencyArrear> emergencyArrears;
   final List<int> closedAptNums;
   final List<SpecialAptFee> specialAptFees;
+  final Map<int, ApartmentProfile> apartmentProfiles;
 
   const BuildingState({
     this.loading = true,
@@ -70,6 +71,7 @@ class BuildingState {
     this.emergencyArrears = const [],
     this.closedAptNums = const [14, 15, 16, 17, 18],
     this.specialAptFees = const [],
+    this.apartmentProfiles = const {},
   });
 
   AppLocalizations get s => lookupAppLocalizations(Locale(localeCode));
@@ -134,6 +136,7 @@ class BuildingState {
     List<EmergencyArrear>? emergencyArrears,
     List<int>? closedAptNums,
     List<SpecialAptFee>? specialAptFees,
+    Map<int, ApartmentProfile>? apartmentProfiles,
   }) {
     return BuildingState(
       loading: loading ?? this.loading,
@@ -168,6 +171,7 @@ class BuildingState {
       emergencyArrears: emergencyArrears ?? this.emergencyArrears,
       closedAptNums: closedAptNums ?? this.closedAptNums,
       specialAptFees: specialAptFees ?? this.specialAptFees,
+      apartmentProfiles: apartmentProfiles ?? this.apartmentProfiles,
     );
   }
 }

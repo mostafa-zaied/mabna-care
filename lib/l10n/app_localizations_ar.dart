@@ -1832,4 +1832,126 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get aptConvertedToClosedToast =>
       '✅ تم تحويل الشقة إلى «مغلقة» وتحديث عدد الشقق النشطة';
+
+  @override
+  String get myProfileTitle => 'بروفايل شقتي';
+
+  @override
+  String get myProfileBtn => 'البروفايل';
+
+  @override
+  String get floorLabel => 'الدور';
+
+  @override
+  String get floorHint => 'مثال: الدور الثالث';
+
+  @override
+  String get phoneNumberLabel => 'رقم التليفون';
+
+  @override
+  String get phoneNumberHint => '01012345678';
+
+  @override
+  String get showPhoneToNeighborsLabel => 'إظهار رقمي للجيران في دليل العمارة';
+
+  @override
+  String get showPhoneToNeighborsSub => 'لو مقفول، يظهر لمدير العمارة فقط';
+
+  @override
+  String get saveProfileBtn => 'حفظ بيانات البروفايل';
+
+  @override
+  String get profileSavedToast => '✅ تم حفظ بيانات بروفايل الشقة بنجاح';
+
+  @override
+  String get profileSelectAptFirst =>
+      'اختر شقتك أولاً من الأعلى ثم افتحها بكلمة السر لتعديل البروفايل';
+
+  @override
+  String get changeAptPassTitle => 'تغيير كلمة سر الشقة';
+
+  @override
+  String get currentPassLabel => 'كلمة السر الحالية';
+
+  @override
+  String get newPassLabel => 'كلمة السر الجديدة';
+
+  @override
+  String get confirmNewPassLabel => 'تأكيد كلمة السر الجديدة';
+
+  @override
+  String get saveNewPassBtn => 'تحديث كلمة السر';
+
+  @override
+  String get aptPassChangedToast => '✅ تم تغيير كلمة سر الشقة بنجاح';
+
+  @override
+  String get forgotPassSectionTitle => 'نسيت كلمة السر؟';
+
+  @override
+  String get forgotPassDesc =>
+      'لحماية شقتك من العبث، يمكنك طلب إعادة تعيين كلمة السر من مدير العمارة بضغطة واحدة.';
+
+  @override
+  String get requestPassResetBtn => 'طلب إعادة تعيين من المدير';
+
+  @override
+  String get whatsappManagerBtn => 'واتساب المدير';
+
+  @override
+  String get passResetRequestedToast =>
+      '✅ تم إرسال طلب إعادة تعيين كلمة السر للمدير';
+
+  @override
+  String get contactCategoryLabel => 'التصنيف / التخصص';
+
+  @override
+  String get catAll => 'الكل';
+
+  @override
+  String get catPlumbing => 'سباكة';
+
+  @override
+  String get catElectric => 'كهرباء';
+
+  @override
+  String get catElevator => 'أسانسير';
+
+  @override
+  String get catAc => 'تكييف';
+
+  @override
+  String get catCarpentry => 'نجارة';
+
+  @override
+  String get catOther => 'أخرى';
+
+  @override
+  String get exitAppDialogTitle => 'هل تريد الخروج من MABNA CARE؟';
+
+  @override
+  String get exitAppDialogBody =>
+      'اضغط «البقاء في التطبيق» للاستمرار أو «خروج» لإغلاق التطبيق.';
+
+  @override
+  String get stayInAppBtn => 'البقاء في التطبيق';
+
+  @override
+  String get exitAppBtn => 'خروج';
+
+  @override
+  String get changePhotoBtn => 'تغيير الصورة';
+
+  @override
+  String get removePhotoBtn => 'حذف الصورة';
+
+  @override
+  String get contactsTabNeighbors => 'الجيران';
+
+  @override
+  String get noNeighborsYet =>
+      'لم يضف أي جار بيانات الدور أو رقم الهاتف في بروفايل شقته بعد.';
+
+  @override
+  String get neighborPhoneHiddenAdminBadge => 'مخفي عن الجيران';
 }

@@ -1045,6 +1045,7 @@ class BuildingService {
     required String name,
     required String roleDesc,
     required String phone,
+    String category = 'other',
     int? addedByApt,
     String? addedByLabel,
     Uint8List? cardImageBytes,
@@ -1065,6 +1066,7 @@ class BuildingService {
           name: cleanName,
           roleDesc: roleDesc.trim(),
           phone: cleanPhone,
+          category: category,
           addedByApt: addedByApt,
           addedByLabel: addedByLabel?.trim(),
           localCardBytes: cardImageBytes,
@@ -1097,6 +1099,7 @@ class BuildingService {
         'p_card_image_url': cardUrl,
         'p_passcode': passcode,
         'p_admin_pass': adminPass,
+        'p_category': category,
       });
       if (res is Map && res['ok'] == true) return null;
       return (res is Map ? res['error']?.toString() : null) ?? 'err_submit_failed';
@@ -1111,6 +1114,7 @@ class BuildingService {
     required String name,
     required String roleDesc,
     required String phone,
+    String? category,
     Uint8List? newCardImageBytes,
     bool removeCardImage = false,
   }) async {
@@ -1131,6 +1135,7 @@ class BuildingService {
         name: cleanName,
         roleDesc: roleDesc.trim(),
         phone: cleanPhone,
+        category: category ?? prev.category,
         addedByApt: prev.addedByApt,
         addedByLabel: prev.addedByLabel,
         cardImageUrl: removeCardImage ? null : prev.cardImageUrl,
@@ -1165,6 +1170,7 @@ class BuildingService {
           'p_role_desc': roleDesc.trim(),
           'p_phone': cleanPhone,
           'p_card_image_url': cardUrlParam,
+          'p_category': category,
         },
       );
       if (res is Map && res['ok'] == true) return null;
@@ -2092,6 +2098,139 @@ class BuildingService {
       return (res is Map ? res['error']?.toString() : null) ?? 'err_delete_failed';
     } catch (_) {
       return 'err_delete_failed';
+    }
+  }
+
+  final Map<int, ApartmentProfile> _demoProfiles = {};
+
+  Future<Map<int, ApartmentProfile>> fetchApartmentProfiles({
+    String? adminPass,
+    int? aptNum,
+    String? passcode,
+  }) async {
+    if (!_useSupabase) {
+      return Map<int, ApartmentProfile>.from(_demoProfiles);
+    }
+    try {
+      final res = await Supabase.instance.client.rpc(
+        'get_apartment_profiles',
+        params: {
+          'p_admin_pass': adminPass,
+          'p_apt_num': aptNum,
+          'p_passcode': passcode,
+        },
+      );
+      if (res is List) {
+        final out = <int, ApartmentProfile>{};
+        for (final row in res) {
+          if (row is Map) {
+            final p = ApartmentProfile.fromJson(Map<String, dynamic>.from(row));
+            if (p.aptNum > 0) out[p.aptNum] = p;
+          }
+        }
+        return out;
+      }
+      return {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<String?> updateOwnApartmentProfile({
+    required int aptNum,
+    required String passcode,
+    String? displayName,
+    required String floorNum,
+    required String phone,
+    required bool showPhoneToNeighbors,
+    String? adminPass,
+    Uint8List? avatarBytes,
+    bool removeAvatar = false,
+  }) async {
+    if (!_useSupabase) {
+      final prev = _demoProfiles[aptNum];
+      _demoProfiles[aptNum] = ApartmentProfile(
+        aptNum: aptNum,
+        displayName: displayName?.trim() ?? '',
+        floorNum: floorNum.trim(),
+        phone: phone.trim(),
+        showPhoneToNeighbors: showPhoneToNeighbors,
+        isClosed: _demoClosedApts.contains(aptNum),
+        avatarUrl: removeAvatar ? '' : (prev?.avatarUrl ?? ''),
+      );
+      if (displayName != null && displayName.trim().isNotEmpty) {
+        final prevApt = _demoApartments[aptNum];
+        _demoApartments[aptNum] = ApartmentInfo(
+          aptNum: aptNum,
+          displayName: displayName.trim(),
+          passcode: prevApt?.passcode ?? '${1000 + aptNum}',
+        );
+      }
+      return null;
+    }
+    try {
+      final client = Supabase.instance.client;
+      String? avatarUrlParam;
+      if (avatarBytes != null) {
+        final ts = DateTime.now().millisecondsSinceEpoch;
+        final storagePath = 'avatars/apt_${aptNum}_$ts.jpg';
+        await client.storage.from('receipts').uploadBinary(
+              storagePath,
+              avatarBytes,
+              fileOptions: const FileOptions(upsert: true),
+            );
+        avatarUrlParam = client.storage.from('receipts').getPublicUrl(storagePath);
+      } else if (removeAvatar) {
+        avatarUrlParam = '';
+      }
+      final res = await client.rpc(
+        'update_own_apartment_profile',
+        params: {
+          'p_apt_num': aptNum,
+          'p_passcode': passcode,
+          'p_display_name': displayName,
+          'p_floor_num': floorNum.trim(),
+          'p_phone': phone.trim(),
+          'p_show_phone_to_neighbors': showPhoneToNeighbors,
+          'p_admin_pass': adminPass,
+          'p_avatar_url': avatarUrlParam,
+        },
+      );
+      if (res is Map && res['ok'] == true) return null;
+      return (res is Map ? res['error']?.toString() : null) ?? 'err_submit_failed';
+    } catch (_) {
+      return 'err_submit_failed';
+    }
+  }
+
+  Future<String?> changeApartmentPasscode({
+    required int aptNum,
+    required String oldPasscode,
+    required String newPasscode,
+  }) async {
+    if (newPasscode.trim().length < 4) return 'err_pass_too_short';
+    if (!_useSupabase) {
+      final prev = _demoApartments[aptNum];
+      _demoApartments[aptNum] = ApartmentInfo(
+        aptNum: aptNum,
+        displayName: prev?.displayName ?? '',
+        passcode: newPasscode.trim(),
+      );
+      return null;
+    }
+    try {
+      final res = await Supabase.instance.client.rpc(
+        'change_apartment_passcode',
+        params: {
+          'p_apt_num': aptNum,
+          'p_old_passcode': oldPasscode.trim(),
+          'p_new_passcode': newPasscode.trim(),
+        },
+      );
+      if (res is Map && res['ok'] == true) return null;
+      return (res is Map ? res['error']?.toString() : null) ?? 'err_wrong_apt_pass';
+    } catch (_) {
+      return 'err_wrong_apt_pass';
     }
   }
 }

@@ -69,6 +69,12 @@
           firebase.initializeApp(firebaseConfig);
         }
 
+        // Confirm before closing/leaving the browser tab
+        window.addEventListener('beforeunload', function (e) {
+          e.preventDefault();
+          e.returnValue = '';
+        });
+
         // Clean up any legacy flutter_service_worker.js or duplicate FCM SW on wrong scope
         if ('serviceWorker' in navigator) {
           const expectedScope = new URL('firebase-cloud-messaging-push-scope', document.baseURI).href;

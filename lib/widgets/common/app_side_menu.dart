@@ -5,12 +5,14 @@ import '../../config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/utils/apartment_avatar.dart';
 import '../../core/utils/push_notifications.dart';
 import '../../cubit/building_cubit.dart';
 import '../../cubit/building_state.dart';
 import '../../screens/admin_settings_screen.dart';
 import '../../screens/install_app_screen.dart';
 import '../dialogs/admin_login_dialog.dart';
+import '../dialogs/apartment_profile_dialog.dart';
 import '../dialogs/manage_apartments_dialog.dart';
 
 class AppSideMenu extends StatelessWidget {
@@ -53,25 +55,22 @@ class AppSideMenu extends StatelessWidget {
     final isDark = state.isDarkMode;
     final isPushGranted = getPushPermissionStatus() == 'granted';
 
-    final String headerSubtitle;
-    if (state.myAptNum != null) {
-      final aptText = s.drawerMyAptLabel(state.aptLabel(state.myAptNum!));
-      headerSubtitle = state.isAdminAuthenticated
-          ? '$aptText • ${s.contactAddedByAdmin}'
-          : aptText;
-    } else {
-      headerSubtitle = state.isAdminAuthenticated
-          ? '${s.splashTagline} • ${s.contactAddedByAdmin}'
-          : s.splashTagline;
-    }
+    final headerSubtitle = state.isAdminAuthenticated
+        ? '${s.splashTagline} • ${s.contactAddedByAdmin}'
+        : s.splashTagline;
 
     return Material(
       color: Colors.transparent,
       child: SafeArea(
-        child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 140 || constraints.maxHeight < 220) {
+              return const SizedBox.shrink();
+            }
+            return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Compact Brand Header
+            // Compact Brand Header + Clickable Apartment Profile Pill
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.lg,
@@ -79,65 +78,149 @@ class AppSideMenu extends StatelessWidget {
                 AppSpacing.sm,
                 AppSpacing.sm,
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primary, AppColors.emerald],
-                        begin: AlignmentDirectional.topStart,
-                        end: AlignmentDirectional.bottomEnd,
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.primary, AppColors.emerald],
+                            begin: AlignmentDirectional.topStart,
+                            end: AlignmentDirectional.bottomEnd,
+                          ),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.30),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.apartment_rounded,
+                          color: Colors.white,
+                          size: 21,
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.30),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              s.appTitle,
+                              style: AppTypography.title.copyWith(
+                                color: AppColors.textPrimary(isDark),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 15.5,
+                              ),
+                            ),
+                            Text(
+                              headerSubtitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.textSecondary(isDark),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.apartment_rounded,
-                      color: Colors.white,
-                      size: 21,
-                    ),
+                      ),
+                      IconButton(
+                        tooltip: s.close,
+                        onPressed: () => _close(context),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          size: 19,
+                          color: AppColors.textSecondary(isDark),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          s.appTitle,
-                          style: AppTypography.title.copyWith(
-                            color: AppColors.textPrimary(isDark),
-                            fontWeight: FontWeight.w900,
-                            fontSize: 15.5,
+                  const SizedBox(height: AppSpacing.sm),
+                  Builder(
+                    builder: (_) {
+                      final myApt = state.myAptNum;
+                      final profile =
+                          myApt != null ? state.apartmentProfiles[myApt] : null;
+                      final label = myApt != null
+                          ? s.drawerMyAptLabel(state.aptLabel(myApt))
+                          : s.myProfileTitle;
+                      return Padding(
+                        padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              _close(context);
+                              showApartmentProfileDialog(
+                                context: context,
+                                cubit: cubit,
+                                aptNum: myApt,
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            child: Container(
+                              padding: const EdgeInsetsDirectional.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary
+                                    .withValues(alpha: isDark ? 0.16 : 0.10),
+                                borderRadius: BorderRadius.circular(AppRadius.md),
+                                border: Border.all(
+                                  color: AppColors.primary
+                                      .withValues(alpha: isDark ? 0.28 : 0.20),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  if (myApt != null)
+                                    ApartmentAvatar(
+                                      aptNum: myApt,
+                                      avatarUrl: (profile != null && profile.hasAvatar)
+                                          ? profile.avatarUrl
+                                          : null,
+                                      size: 24,
+                                      borderRadius: 99,
+                                    )
+                                  else
+                                    Icon(
+                                      Icons.home_rounded,
+                                      size: 16,
+                                      color: AppColors.primaryText(isDark),
+                                    ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Expanded(
+                                    child: Text(
+                                      label,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTypography.caption.copyWith(
+                                        color: AppColors.textPrimary(isDark),
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    size: 16,
+                                    color: AppColors.textSecondary(isDark),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                        Text(
-                          headerSubtitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.textSecondary(isDark),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: s.close,
-                    onPressed: () => _close(context),
-                    icon: Icon(
-                      Icons.close_rounded,
-                      size: 19,
-                      color: AppColors.textSecondary(isDark),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -158,6 +241,18 @@ class AppSideMenu extends StatelessWidget {
                   _groupCard(
                     isDark: isDark,
                     children: [
+                      _groupRow(
+                        icon: Icons.groups_outlined,
+                        label: s.contactsTabNeighbors,
+                        isDark: isDark,
+                        selected: state.selectedNavIndex == 8,
+                        accentColor: AppColors.emeraldText(isDark),
+                        trailing: _chevron(isDark),
+                        onTap: () {
+                          _close(context);
+                          cubit.selectNav(8);
+                        },
+                      ),
                       _groupRow(
                         icon: Icons.how_to_vote_outlined,
                         label: s.navPolls,
@@ -394,6 +489,8 @@ class AppSideMenu extends StatelessWidget {
               ),
             ),
           ],
+        );
+          },
         ),
       ),
     );

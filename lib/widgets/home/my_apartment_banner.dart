@@ -8,6 +8,7 @@ import '../../cubit/building_cubit.dart';
 import '../../cubit/building_state.dart';
 import '../../models/building_models.dart';
 import '../dialogs/apartment_payment_dialog.dart';
+import '../dialogs/apartment_profile_dialog.dart';
 
 class MyApartmentBanner extends StatelessWidget {
   final BuildingCubit cubit;
@@ -252,6 +253,20 @@ class MyApartmentBanner extends StatelessWidget {
               ),
             ),
           ],
+          IconButton(
+            tooltip: s.myProfileTitle,
+            visualDensity: VisualDensity.compact,
+            onPressed: () => showApartmentProfileDialog(
+              context: context,
+              cubit: cubit,
+              aptNum: myApt,
+            ),
+            icon: Icon(
+              Icons.manage_accounts_outlined,
+              size: 19,
+              color: AppColors.primaryText(isDark),
+            ),
+          ),
           PopupMenuButton<int>(
             tooltip: s.changeAptTooltip,
             onSelected: (val) => cubit.setMyApt(val == -1 ? null : val),

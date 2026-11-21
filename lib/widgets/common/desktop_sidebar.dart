@@ -5,6 +5,7 @@ import '../../config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/utils/apartment_avatar.dart';
 import '../../core/utils/push_notifications.dart';
 import '../../cubit/building_cubit.dart';
 import '../../cubit/building_state.dart';
@@ -12,6 +13,7 @@ import '../../screens/admin_settings_screen.dart';
 import '../../screens/install_app_screen.dart';
 import '../../screens/notifications_screen.dart';
 import '../dialogs/admin_login_dialog.dart';
+import '../dialogs/apartment_profile_dialog.dart';
 import '../dialogs/manage_apartments_dialog.dart';
 
 class DesktopSidebar extends StatelessWidget {
@@ -113,41 +115,82 @@ class DesktopSidebar extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (extended && state.myAptNum != null) ...[
+                if (extended) ...[
                   const SizedBox(height: AppSpacing.md),
-                  Container(
-                    padding: const EdgeInsetsDirectional.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: isDark ? 0.16 : 0.10),
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: isDark ? 0.28 : 0.20),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.home_rounded,
-                          size: 15,
-                          color: AppColors.primaryText(isDark),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Expanded(
-                          child: Text(
-                            s.drawerMyAptLabel(state.aptLabel(state.myAptNum!)),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTypography.caption.copyWith(
-                              color: AppColors.textPrimary(isDark),
-                              fontWeight: FontWeight.w700,
+                  Builder(
+                    builder: (_) {
+                      final myApt = state.myAptNum;
+                      final profile =
+                          myApt != null ? state.apartmentProfiles[myApt] : null;
+                      final label = myApt != null
+                          ? s.drawerMyAptLabel(state.aptLabel(myApt))
+                          : s.myProfileTitle;
+                      return Tooltip(
+                        message: s.myProfileTitle,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => showApartmentProfileDialog(
+                              context: context,
+                              cubit: cubit,
+                              aptNum: myApt,
+                            ),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            child: Container(
+                              padding: const EdgeInsetsDirectional.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical: 7,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary
+                                    .withValues(alpha: isDark ? 0.16 : 0.10),
+                                borderRadius: BorderRadius.circular(AppRadius.md),
+                                border: Border.all(
+                                  color: AppColors.primary
+                                      .withValues(alpha: isDark ? 0.28 : 0.20),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  if (myApt != null)
+                                    ApartmentAvatar(
+                                      aptNum: myApt,
+                                      avatarUrl: (profile != null && profile.hasAvatar)
+                                          ? profile.avatarUrl
+                                          : null,
+                                      size: 22,
+                                      borderRadius: 99,
+                                    )
+                                  else
+                                    Icon(
+                                      Icons.home_rounded,
+                                      size: 15,
+                                      color: AppColors.primaryText(isDark),
+                                    ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Expanded(
+                                    child: Text(
+                                      label,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTypography.caption.copyWith(
+                                        color: AppColors.textPrimary(isDark),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    size: 16,
+                                    color: AppColors.textSecondary(isDark),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ],
               ],
@@ -270,6 +313,16 @@ class DesktopSidebar extends StatelessWidget {
                   isDark: isDark,
                   selected: state.selectedNavIndex == 3,
                   onTap: () => cubit.selectNav(3),
+                ),
+                _tile(
+                  icon: state.selectedNavIndex == 8
+                      ? Icons.groups_rounded
+                      : Icons.groups_outlined,
+                  label: s.contactsTabNeighbors,
+                  isDark: isDark,
+                  selected: state.selectedNavIndex == 8,
+                  accentColor: AppColors.emeraldText(isDark),
+                  onTap: () => cubit.selectNav(8),
                 ),
                 _tile(
                   icon: state.selectedNavIndex == 7

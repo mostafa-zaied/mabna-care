@@ -18,6 +18,7 @@ import 'contacts_screen.dart';
 import 'emergency_screen.dart';
 import 'feedback_screen.dart';
 import 'home_screen.dart';
+import 'neighbors_screen.dart';
 import 'notifications_screen.dart';
 import 'polls_screen.dart';
 import 'rating_screen.dart';
@@ -61,6 +62,80 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
   void _closeDrawer() => _drawerCtrl.reverse();
   void _toggleDrawer() => _isDrawerOpen ? _closeDrawer() : _openDrawer();
 
+  Future<void> _handleBackRequest(
+    BuildContext context,
+    BuildingCubit cubit,
+    BuildingState state,
+  ) async {
+    if (_isDrawerOpen) {
+      _closeDrawer();
+      return;
+    }
+    if (state.selectedNavIndex != 0) {
+      cubit.selectNav(0);
+      return;
+    }
+    final s = state.s;
+    final isDark = state.isDarkMode;
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card(isDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          side: BorderSide(color: AppColors.border(isDark)),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.exit_to_app_rounded, color: AppColors.amber, size: 22),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                s.exitAppDialogTitle,
+                style: AppTypography.headline.copyWith(
+                  fontSize: 15.5,
+                  color: AppColors.textPrimary(isDark),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          s.exitAppDialogBody,
+          style: AppTypography.body.copyWith(
+            color: AppColors.textSecondary(isDark),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              s.exitAppBtn,
+              style: TextStyle(
+                color: AppColors.dangerText(isDark),
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryActionBg(isDark),
+              foregroundColor: AppColors.onPrimaryAction(isDark),
+            ),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              s.stayInAppBtn,
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (shouldExit == true) {
+      SystemNavigator.pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BuildingCubit, BuildingState>(
@@ -91,6 +166,7 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
           AdminViewsScreen(),
           PollsScreen(),
           RatingScreen(),
+          NeighborsScreen(),
         ];
 
         final bgDecoration = BoxDecoration(
@@ -116,7 +192,13 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
                 systemNavigationBarIconBrightness: Brightness.dark,
               );
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            _handleBackRequest(context, cubit, state);
+          },
+          child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: overlayStyle,
           child: NetworkStatusWrapper(
             s: s,
@@ -424,6 +506,7 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
           ),
           ),
           ),
+        ),
         );
       },
     );
