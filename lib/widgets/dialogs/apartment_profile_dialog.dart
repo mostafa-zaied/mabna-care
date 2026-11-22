@@ -559,6 +559,7 @@ class _ApartmentProfileScreenState extends State<ApartmentProfileScreen> {
                                 ),
                               ),
                             ),
+                            //
                             const SizedBox(height: AppSpacing.sm),
                             AppPrimaryButton(
                               label: s.saveProfileBtn,
