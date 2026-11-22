@@ -21,27 +21,23 @@ class ApartmentAvatar extends StatelessWidget {
   });
 
   static const _icons = <IconData>[
-    Icons.face_rounded,
-    Icons.face_2_rounded,
-    Icons.face_3_rounded,
-    Icons.face_4_rounded,
-    Icons.face_5_rounded,
-    Icons.face_6_rounded,
-    Icons.sentiment_satisfied_alt_rounded,
     Icons.person_rounded,
-    Icons.emoji_people_rounded,
-    Icons.psychology_alt_rounded,
+    Icons.sentiment_satisfied_alt_rounded,
     Icons.mood_rounded,
-    Icons.record_voice_over_rounded,
+    Icons.home_rounded,
+    Icons.apartment_rounded,
+    Icons.verified_user_rounded,
+    Icons.shield_rounded,
+    Icons.star_rounded,
   ];
 
   static const _gradients = <List<Color>>[
     [Color(0xFF2563EB), Color(0xFF10B981)],
-    [Color(0xFF7C3AED), Color(0xFF3B82F6)],
+    [Color(0xFF3B82F6), Color(0xFF0EA5E9)],
     [Color(0xFF0EA5E9), Color(0xFF14B8A6)],
-    [Color(0xFFF59E0B), Color(0xFFEA580C)],
-    [Color(0xFFEC4899), Color(0xFF8B5CF6)],
     [Color(0xFF059669), Color(0xFF0284C7)],
+    [Color(0xFF4F46E5), Color(0xFF2563EB)],
+    [Color(0xFF0D9488), Color(0xFF2563EB)],
   ];
 
   @override

@@ -293,7 +293,19 @@ class _ApartmentProfileScreenState extends State<ApartmentProfileScreen> {
                           Row(
                             children: [
                               InkWell(
-                                onTap: unlockedHere ? _pickAvatar : null,
+                                onTap: unlockedHere
+                                    ? _pickAvatar
+                                    : () async {
+                                        await showClosedApartmentPasscodeDialog(
+                                          context: context,
+                                          cubit: widget.cubit,
+                                          state: state,
+                                          aptNum: aptNum,
+                                        );
+                                        if (mounted) {
+                                          setState(() => _hydrateForApt(aptNum));
+                                        }
+                                      },
                                 borderRadius: BorderRadius.circular(AppRadius.lg),
                                 child: Stack(
                                   clipBehavior: Clip.none,
@@ -456,12 +468,17 @@ class _ApartmentProfileScreenState extends State<ApartmentProfileScreen> {
                             AppPrimaryButton(
                               label: s.passcodeLabel,
                               icon: Icons.vpn_key_outlined,
-                              onPressed: () => showClosedApartmentPasscodeDialog(
-                                context: context,
-                                cubit: widget.cubit,
-                                state: state,
-                                aptNum: aptNum,
-                              ),
+                              onPressed: () async {
+                                await showClosedApartmentPasscodeDialog(
+                                  context: context,
+                                  cubit: widget.cubit,
+                                  state: state,
+                                  aptNum: aptNum,
+                                );
+                                if (mounted) {
+                                  setState(() => _hydrateForApt(aptNum));
+                                }
+                              },
                             ),
                           ] else ...[
                             const SizedBox(height: AppSpacing.lg),
